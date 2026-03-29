@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f13">
+<meta name="description" content="Odak Defterim — Hedeflerine odaklan.">
+<title>Odak Defterim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #17171e;
+    --surface2: #1e1e28;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.42);
+    --accent: #c8a96e;
+    --accent2: #7c6fa0;
+    --green: #6db88a;
+    --red: #e07575;
+    --radius: 18px;
+    --glow: 0 0 40px rgba(200,169,110,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 10%, rgba(124,111,160,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 85% 85%, rgba(200,169,110,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(109,184,138,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0 8px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--accent) 0%, #a07840 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: #0f0f13;
+    letter-spacing: -1px;
+    box-shadow: 0 4px 20px rgba(200,169,110,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+    transform: rotate(30deg) translateY(-100%);
+    animation: shimmer 4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 80% { transform: rotate(30deg) translateY(-100%); }
+    90% { transform: rotate(30deg) translateY(200%); }
+    100% { transform: rotate(30deg) translateY(200%); }
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .logo-text span:first-child {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span:last-child {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .date-chip {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(2) { animation-delay: 0.05s; }
+  .card:nth-child(3) { animation-delay: 0.10s; }
+  .card:nth-child(4) { animation-delay: 0.15s; }
+  .card:nth-child(5) { animation-delay: 0.20s; }
+
+  .card-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  /* ── MOTIVATION CARD ── */
+  .motivation-card {
+    background: linear-gradient(135deg, #1a1722 0%, #17171e 100%);
+    border-color: rgba(124,111,160,0.2);
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+
+  .motivation-card:hover { border-color: rgba(124,111,160,0.4); }
+
+  .motivation-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 14px;
+    min-height: 54px;
+    transition: opacity 0.4s;
+  }
+
+  .motivation-author {
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 400;
+    transition: opacity 0.4s;
+  }
+
+  .motivation-refresh {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(124,111,160,0.12);
+    border: 1px solid rgba(124,111,160,0.2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--accent2);
+    font-size: 14px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .motivation-refresh:hover { background: rgba(124,111,160,0.2); transform: rotate(45deg); }
+
+  /* ── PROGRESS ── */
+  .progress-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .progress-title { font-family: 'Playfair Display', serif; font-size: 20px; }
+
+  .progress-pct {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .progress-pct span { font-size: 14px; color: var(--muted); }
+
+  .progress-track {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 0 16px rgba(200,169,110,0.3);
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+    border-radius: 100px;
+  }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-label-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .progress-label-item:last-child { align-items: flex-end; }
+  .progress-label-item:first-child { align-items: flex-start; }
+
+  .progress-label-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .progress-label-sub { font-size: 11px; color: var(--muted); }
+
+  .progress-edit-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .progress-input-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .progress-input-wrap label { font-size: 11px; color: var(--muted); }
+
+  .progress-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .progress-input::-webkit-inner-spin-button,
+  .progress-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .progress-input:focus { border-color: var(--accent); }
+
+  /* ── TASKS ── */
+  .task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .task-add-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .task-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .task-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s, margin-bottom 0.3s;
+  }
+
+  .task-input-row.open {
+    max-height: 60px;
+    opacity: 1;
+    margin-bottom: 14px;
+  }
+
+  .task-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .task-input:focus { border-color: var(--accent); }
+
+  .task-input::placeholder { color: var(--muted); }
+
+  .task-submit {
+    background: var(--accent);
+    border: none;
+    color: #0f0f13;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .task-submit:hover { opacity: 0.85; }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 4px;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 0.3s;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+
+  .task-item:last-child { border-bottom: none; }
+
+  .task-item.done { opacity: 0.45; }
+
+  .task-check {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+    background: transparent;
+  }
+
+  .task-item.done .task-check {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .task-check-icon {
+    opacity: 0;
+    transform: scale(0.4);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #0f0f13;
+    font-size: 12px;
+  }
+
+  .task-item.done .task-check-icon {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .task-text {
+    flex: 1;
+    font-size: 14.5px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.4;
+    transition: text-decoration 0.3s;
+    position: relative;
+  }
+
+  .task-item.done .task-text {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .task-del {
+    opacity: 0;
+    font-size: 18px;
+    color: var(--muted);
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+    padding: 2px 4px;
+  }
+
+  .task-item:hover .task-del { opacity: 0.5; }
+  .task-del:hover { color: var(--red) !important; opacity: 1 !important; }
+
+  .task-empty {
+    text-align: center;
+    padding: 28px 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .task-empty span { display: block; font-size: 28px; margin-bottom: 8px; }
+
+  /* ── STATS BAR ── */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .stat-item {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-item:nth-child(1) { animation-delay: 0.25s; }
+  .stat-item:nth-child(2) { animation-delay: 0.30s; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.3px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 8px 0 0;
+    font-size: 11px;
+    color: rgba(240,237,232,0.2);
+    letter-spacing: 0.5px;
+    animation: fadeUp 0.5s 0.35s ease both;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    z-index: 99;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 380px) {
+    .progress-label-num { font-size: 18px; }
+    .motivation-quote { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">OD</div>
+      <div class="logo-text">
+        <span>Odak Defterim</span>
+        <span>Hedeflerine odaklan</span>
+      </div>
+    </div>
+    <div class="date-chip" id="dateChip"></div>
+  </header>
+
+  <!-- MOTIVATION CARD -->
+  <div class="card motivation-card" onclick="nextQuote()">
+    <div class="card-label">✦ Günün Tebessümü</div>
+    <div class="motivation-quote" id="quoteText"></div>
+    <div class="motivation-author" id="quoteAuthor"></div>
+    <div class="motivation-refresh" title="Yeni alıntı">↻</div>
+  </div>
+
+  <!-- PROGRESS CARD -->
+  <div class="card">
+    <div class="card-label">◈ Hedef İlerlemesi</div>
+    <div class="progress-header">
+      <div class="progress-title" id="progressTitle">TYT Hedefi</div>
+      <div class="progress-pct"><span id="pctNum">0</span><span>%</span></div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-labels">
+      <div class="progress-label-item">
+        <div class="progress-label-num" id="labelCurrent">37</div>
+        <div class="progress-label-sub">Mevcut Net</div>
+      </div>
+      <div class="progress-label-item" style="align-items:center">
+        <div class="progress-label-sub" id="labelGap">+33 net kaldı</div>
+      </div>
+      <div class="progress-label-item">
+        <div class="progress-label-num" id="labelTarget">70</div>
+        <div class="progress-label-sub">Hedef Net</div>
+      </div>
+    </div>
+    <div class="progress-edit-row">
+      <div class="progress-input-wrap">
+        <label for="inputCurrent">Mevcut Net</label>
+        <input class="progress-input" type="number" id="inputCurrent" value="37" min="0">
+      </div>
+      <div class="progress-input-wrap">
+        <label for="inputTarget">Hedef Net</label>
+        <input class="progress-input" type="number" id="inputTarget" value="70" min="1">
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKS CARD -->
+  <div class="card">
+    <div class="task-header">
+      <div class="card-label" style="margin-bottom:0">◧ Bugünün Görevleri</div>
+      <button class="task-add-btn" id="taskToggleBtn" title="Görev ekle">+</button>
+    </div>
+
+    <div class="task-input-row" id="taskInputRow">
+      <input class="task-input" type="text" id="taskInput" placeholder="Yeni görev ekle…" maxlength="80">
+      <button class="task-submit" id="taskSubmit">Ekle</button>
+    </div>
+
+    <div class="task-list" id="taskList"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num" id="statDone">0</div>
+      <div class="stat-label">Tamamlanan</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statRemaining">0</div>
+      <div class="stat-label">Kalan Görev</div>
+    </div>
+  </div>
+
+  <footer>Odak Defterim — v1.0 &nbsp;·&nbsp; Hedeflerine odaklan</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const QUOTES = [
+  { text: "Başarının sırrı, hedefini belirleyip, her gün ona doğru küçük adımlar atmaktır.", author: "— Johann Wolfgang von Goethe" },
+  { text: "Zorlandığında vazgeçme; zirveye yaklaştığını bil.", author: "— Türk Atasözü" },
+  { text: "Her gün biraz daha iyi olmak, bir günde mükemmel olmaktan değerlidir.", author: "— Konfüçyüs" },
+  { text: "Hayal ettiğin geleceği inşa etmek için bugünkü çaban yeter.", author: "— Anonim" },
+  { text: "Disiplin, motivasyon kaybolduğunda devreye giren şeydir.", author: "— Elbert Hubbard" },
+  { text: "Başarmak istiyorsan, başarıyı hak etmeyi öğren. Hak etmek ise çalışmakla başlar.", author: "— Mustafa Kemal Atatürk" },
+  { text: "Küçük adımlar bile ileriye taşır. Durma.", author: "— Lao-tzu" },
+  { text: "Bugün yapabileceğini yarına bırakma; çünkü yarın yeni bir bugün getirecek.", author: "— Benjamin Franklin" },
+  { text: "Hedefine ulaşmak için bugünkü rahatlığından feragat edebilirsin.", author: "— Anonim" },
+  { text: "İnsanın başarısı, karşılaştığı zorlukların büyüklüğüyle ölçülür.", author: "— Plutarkhos" },
+];
+
+let quoteIdx = Math.floor(Math.random() * QUOTES.length);
+let tasks = JSON.parse(localStorage.getItem('od_tasks') || '[]');
+let current = parseInt(localStorage.getItem('od_current') || '37');
+let target = parseInt(localStorage.getItem('od_target') || '70');
+let taskInputOpen = false;
+
+// ── DATE ──
+function setDate() {
+  const now = new Date();
+  const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+  document.getElementById('dateChip').textContent = now.toLocaleDateString('tr-TR', opts);
+}
+
+// ── QUOTES ──
+function nextQuote() {
+  quoteIdx = (quoteIdx + 1) % QUOTES.length;
+  const q = QUOTES[quoteIdx];
+  const el = document.getElementById('quoteText');
+  const au = document.getElementById('quoteAuthor');
+  el.style.opacity = 0; au.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = q.text;
+    au.textContent = q.author;
+    el.style.opacity = 1; au.style.opacity = 1;
+  }, 300);
+}
+
+function initQuote() {
+  const q = QUOTES[quoteIdx];
+  document.getElementById('quoteText').textContent = q.text;
+  document.getElementById('quoteAuthor').textContent = q.author;
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+  const gap = Math.max(0, target - current);
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pctNum').textContent = pct;
+  document.getElementById('labelCurrent').textContent = current;
+  document.getElementById('labelTarget').textContent = target;
+  document.getElementById('labelGap').textContent = gap > 0 ? `+${gap} net kaldı` : '🎯 Hedefe ulaştın!';
+
+  localStorage.setItem('od_current', current);
+  localStorage.setItem('od_target', target);
+}
+
+document.getElementById('inputCurrent').value = current;
+document.getElementById('inputTarget').value = target;
+
+document.getElementById('inputCurrent').addEventListener('input', e => {
+  const v = parseInt(e.target.value);
+  if (!isNaN(v) && v >= 0) { current = v; updateProgress(); }
+});
+
+document.getElementById('inputTarget').addEventListener('input', e => {
+  const v = parseInt(e.target.value);
+  if (!isNaN(v) && v >= 1) { target = v; updateProgress(); }
+});
+
+// ── TASKS ──
+function saveTasks() { localStorage.setItem('od_tasks', JSON.stringify(tasks)); }
+
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  const done = tasks.filter(t => t.done).length;
+  const rem = tasks.filter(t => !t.done).length;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statRemaining').textContent = rem;
+
+  if (tasks.length === 0) {
+    list.innerHTML = '<div class="task-empty"><span>✦</span>Henüz görev yok.<br>Bugünün planını ekle!</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  tasks.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'task-item' + (t.done ? ' done' : '');
+    div.innerHTML = `
+      <div class="task-check"><span class="task-check-icon">✓</span></div>
+      <div class="task-text">${escapeHtml(t.text)}</div>
+      <div class="task-del" data-i="${i}" title="Sil">×</div>
+    `;
+    div.addEventListener('click', e => {
+      if (e.target.classList.contains('task-del')) {
+        tasks.splice(i, 1);
+        saveTasks(); renderTasks();
+        showToast('Görev silindi');
+      } else {
+        tasks[i].done = !tasks[i].done;
+        saveTasks(); renderTasks();
+        if (tasks[i] && tasks[i].done) showToast('Harika! Bir görev tamamlandı ✓');
+      }
+    });
+    list.appendChild(div);
+  });
+}
+
+function addTask() {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+  if (!text) return;
+  tasks.push({ text, done: false });
+  saveTasks(); renderTasks();
+  input.value = '';
+  showToast('Görev eklendi');
+}
+
+document.getElementById('taskToggleBtn').addEventListener('click', () => {
+  taskInputOpen = !taskInputOpen;
+  const row = document.getElementById('taskInputRow');
+  row.classList.toggle('open', taskInputOpen);
+  document.getElementById('taskToggleBtn').textContent = taskInputOpen ? '−' : '+';
+  if (taskInputOpen) setTimeout(() => document.getElementById('taskInput').focus(), 200);
+});
+
+document.getElementById('taskSubmit').addEventListener('click', addTask);
+document.getElementById('taskInput').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── INIT ──
+setDate();
+initQuote();
+renderTasks();
+setTimeout(() => updateProgress(), 100);
+
+// Auto-refresh quote every 60s
+setInterval(nextQuote, 60000);
+</script>
+</body>
+</html>
