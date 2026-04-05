@@ -1,883 +1,1035 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark" data-accent="purple">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0f0f13">
-<meta name="description" content="Odak Defterim — Hedeflerine odaklan.">
-<title>Odak Defterim</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0a0f"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Odak"/>
+<meta name="description" content="YKS odak, görev ve not planlayıcısı"/>
+<title>Odak Defteri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0f0f13;
-    --surface: #17171e;
-    --surface2: #1e1e28;
-    --border: rgba(255,255,255,0.07);
-    --text: #f0ede8;
-    --muted: rgba(240,237,232,0.42);
-    --accent: #c8a96e;
-    --accent2: #7c6fa0;
-    --green: #6db88a;
-    --red: #e07575;
-    --radius: 18px;
-    --glow: 0 0 40px rgba(200,169,110,0.12);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* Ambient background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 15% 10%, rgba(124,111,160,0.13) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 85% 85%, rgba(200,169,110,0.10) 0%, transparent 55%),
-      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(109,184,138,0.05) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 20px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }
-
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px 0 8px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-mark {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, var(--accent) 0%, #a07840 100%);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 17px;
-    color: #0f0f13;
-    letter-spacing: -1px;
-    box-shadow: 0 4px 20px rgba(200,169,110,0.35);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .logo-mark::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
-    transform: rotate(30deg) translateY(-100%);
-    animation: shimmer 4s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0%, 80% { transform: rotate(30deg) translateY(-100%); }
-    90% { transform: rotate(30deg) translateY(200%); }
-    100% { transform: rotate(30deg) translateY(200%); }
-  }
-
-  .logo-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-  }
-
-  .logo-text span:first-child {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
-
-  .logo-text span:last-child {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 300;
-    letter-spacing: 0.5px;
-  }
-
-  .date-chip {
-    font-size: 12px;
-    color: var(--muted);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 6px 14px;
-    border-radius: 100px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-  }
-
-  /* ── CARDS ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .card:nth-child(2) { animation-delay: 0.05s; }
-  .card:nth-child(3) { animation-delay: 0.10s; }
-  .card:nth-child(4) { animation-delay: 0.15s; }
-  .card:nth-child(5) { animation-delay: 0.20s; }
-
-  .card-label {
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 1.8px;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-
-  /* ── MOTIVATION CARD ── */
-  .motivation-card {
-    background: linear-gradient(135deg, #1a1722 0%, #17171e 100%);
-    border-color: rgba(124,111,160,0.2);
-    cursor: pointer;
-    transition: border-color 0.3s;
-  }
-
-  .motivation-card:hover { border-color: rgba(124,111,160,0.4); }
-
-  .motivation-quote {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    line-height: 1.55;
-    color: var(--text);
-    margin-bottom: 14px;
-    min-height: 54px;
-    transition: opacity 0.4s;
-  }
-
-  .motivation-author {
-    font-size: 12px;
-    color: var(--accent2);
-    font-weight: 400;
-    transition: opacity 0.4s;
-  }
-
-  .motivation-refresh {
-    position: absolute;
-    top: 20px; right: 20px;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: rgba(124,111,160,0.12);
-    border: 1px solid rgba(124,111,160,0.2);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    color: var(--accent2);
-    font-size: 14px;
-    transition: all 0.2s;
-    user-select: none;
-  }
-
-  .motivation-refresh:hover { background: rgba(124,111,160,0.2); transform: rotate(45deg); }
-
-  /* ── PROGRESS ── */
-  .progress-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 18px;
-  }
-
-  .progress-title { font-family: 'Playfair Display', serif; font-size: 20px; }
-
-  .progress-pct {
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .progress-pct span { font-size: 14px; color: var(--muted); }
-
-  .progress-track {
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 100px;
-    overflow: hidden;
-    margin-bottom: 14px;
-  }
-
-  .progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    width: 0%;
-    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    box-shadow: 0 0 16px rgba(200,169,110,0.3);
-  }
-
-  .progress-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 20px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-    border-radius: 100px;
-  }
-
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .progress-label-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .progress-label-item:last-child { align-items: flex-end; }
-  .progress-label-item:first-child { align-items: flex-start; }
-
-  .progress-label-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    line-height: 1;
-  }
-
-  .progress-label-sub { font-size: 11px; color: var(--muted); }
-
-  .progress-edit-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  .progress-input-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .progress-input-wrap label { font-size: 11px; color: var(--muted); }
-
-  .progress-input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.2s;
-    -moz-appearance: textfield;
-  }
-
-  .progress-input::-webkit-inner-spin-button,
-  .progress-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-  .progress-input:focus { border-color: var(--accent); }
-
-  /* ── TASKS ── */
-  .task-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .task-add-btn {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 20px;
-    line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-  }
-
-  .task-add-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  .task-input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.35s ease, opacity 0.3s, margin-bottom 0.3s;
-  }
-
-  .task-input-row.open {
-    max-height: 60px;
-    opacity: 1;
-    margin-bottom: 14px;
-  }
-
-  .task-input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .task-input:focus { border-color: var(--accent); }
-
-  .task-input::placeholder { color: var(--muted); }
-
-  .task-submit {
-    background: var(--accent);
-    border: none;
-    color: #0f0f13;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .task-submit:hover { opacity: 0.85; }
-
-  .task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .task-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 13px 4px;
-    border-bottom: 1px solid var(--border);
-    transition: opacity 0.3s;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-  }
-
-  .task-item:last-child { border-bottom: none; }
-
-  .task-item.done { opacity: 0.45; }
-
-  .task-check {
-    width: 20px; height: 20px;
-    border-radius: 6px;
-    border: 1.5px solid rgba(255,255,255,0.18);
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s;
-    background: transparent;
-  }
-
-  .task-item.done .task-check {
-    background: var(--green);
-    border-color: var(--green);
-  }
-
-  .task-check-icon {
-    opacity: 0;
-    transform: scale(0.4);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    color: #0f0f13;
-    font-size: 12px;
-  }
-
-  .task-item.done .task-check-icon {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .task-text {
-    flex: 1;
-    font-size: 14.5px;
-    font-weight: 400;
-    color: var(--text);
-    line-height: 1.4;
-    transition: text-decoration 0.3s;
-    position: relative;
-  }
-
-  .task-item.done .task-text {
-    text-decoration: line-through;
-    color: var(--muted);
-  }
-
-  .task-del {
-    opacity: 0;
-    font-size: 18px;
-    color: var(--muted);
-    transition: opacity 0.2s;
-    flex-shrink: 0;
-    padding: 2px 4px;
-  }
-
-  .task-item:hover .task-del { opacity: 0.5; }
-  .task-del:hover { color: var(--red) !important; opacity: 1 !important; }
-
-  .task-empty {
-    text-align: center;
-    padding: 28px 0;
-    color: var(--muted);
-    font-size: 13.5px;
-    line-height: 1.6;
-  }
-
-  .task-empty span { display: block; font-size: 28px; margin-bottom: 8px; }
-
-  /* ── STATS BAR ── */
-  .stats-row {
-    display: flex;
-    gap: 12px;
-  }
-
-  .stat-item {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 16px;
-    text-align: center;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  .stat-item:nth-child(1) { animation-delay: 0.25s; }
-  .stat-item:nth-child(2) { animation-delay: 0.30s; }
-
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 5px;
-  }
-
-  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.3px; }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 8px 0 0;
-    font-size: 11px;
-    color: rgba(240,237,232,0.2);
-    letter-spacing: 0.5px;
-    animation: fadeUp 0.5s 0.35s ease both;
-  }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: 100px;
-    opacity: 0;
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    pointer-events: none;
-    z-index: 99;
-    white-space: nowrap;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  @media (max-width: 380px) {
-    .progress-label-num { font-size: 18px; }
-    .motivation-quote { font-size: 15px; }
-  }
+/* ════════════════════════════════════════════
+   ODAK DEFTERİ v4.0 — Tek Dosya
+   ════════════════════════════════════════════ */
+
+:root {
+  --accent:#6C63FF; --accent2:#3ECFCF; --accent-rgb:108,99,255;
+  --bg:#0a0a0f; --bg2:#111118; --bg3:#1a1a24;
+  --surface:rgba(255,255,255,0.05);
+  --surface-hover:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.08);
+  --text:#f0f0f8; --text2:#9090aa; --text3:#5a5a72;
+  --shadow:rgba(0,0,0,0.5);
+  --radius:18px; --radius-sm:12px; --radius-xs:8px;
+  --nav-h:74px; --top-h:64px;
+  --font:'Sora',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{
+  --bg:#f4f4f8; --bg2:#eaeaf0; --bg3:#dddde8;
+  --surface:rgba(255,255,255,.65);
+  --surface-hover:rgba(255,255,255,.9);
+  --border:rgba(0,0,0,.08);
+  --text:#1a1a2e; --text2:#5a5a72; --text3:#9090aa;
+  --shadow:rgba(0,0,0,.12);
+}
+[data-accent="teal"]  {--accent:#3ECFCF;--accent2:#6C63FF;--accent-rgb:62,207,207}
+[data-accent="rose"]  {--accent:#FF6B8A;--accent2:#FFB347;--accent-rgb:255,107,138}
+[data-accent="amber"] {--accent:#FFB347;--accent2:#FF6B8A;--accent-rgb:255,179,71}
+[data-accent="green"] {--accent:#4ADE80;--accent2:#3ECFCF;--accent-rgb:74,222,128}
+[data-accent="purple"]{--accent:#6C63FF;--accent2:#3ECFCF;--accent-rgb:108,99,255}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text);
+  overflow:hidden;height:100dvh;
+  transition:background var(--tr),color var(--tr);
+}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+input,textarea{font-family:var(--font)}
+
+/* ── Glass ── */
+.glass{
+  background:var(--surface);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--border);
+}
+
+/* ── Splash ── */
+#splash{
+  position:fixed;inset:0;z-index:999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .5s ease,transform .5s ease;
+}
+#splash.hide{opacity:0;transform:scale(1.06);pointer-events:none}
+.splash-inner{
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  animation:splashPop .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+.splash-icon{
+  width:72px;height:72px;border-radius:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  box-shadow:0 12px 40px rgba(var(--accent-rgb),.4);
+}
+.splash-name{
+  font-size:1.6rem;font-weight:700;letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.splash-bar{
+  width:120px;height:3px;background:var(--bg3);border-radius:99px;overflow:hidden;
+}
+.splash-bar-fill{
+  height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  animation:splashBar 1s ease forwards .3s;
+}
+@keyframes splashPop{from{opacity:0;transform:scale(.6) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes splashBar{from{width:0}to{width:100%}}
+
+/* ── App ── */
+#app{
+  display:flex;flex-direction:column;height:100dvh;
+  padding-top:calc(var(--top-h) + var(--safe-t));
+  padding-bottom:calc(var(--nav-h) + var(--safe-b));
+  opacity:0;transition:opacity .4s ease;
+}
+#app.ready{opacity:1}
+
+/* ── Topbar ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:calc(var(--top-h) + var(--safe-t));
+  padding:calc(var(--safe-t) + 10px) 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.topbar-l{display:flex;align-items:center;gap:12px}
+.app-icon-wrap{
+  width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  box-shadow:0 4px 12px rgba(var(--accent-rgb),.3);
+}
+.topbar-title{font-size:1rem;font-weight:700;letter-spacing:-.3px}
+.topbar-date{font-size:.68rem;color:var(--text2);margin-top:1px}
+.topbar-r{display:flex;gap:6px}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);transition:background var(--tr),transform .15s;
+}
+.icon-btn:active{transform:scale(.91)}
+
+/* ── Pages ── */
+.page-container{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+}
+.page-container::-webkit-scrollbar{display:none}
+.page{display:none;padding:14px 14px 24px;min-height:100%;animation:pgIn .3s ease both}
+.page.active{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Motivation ── */
+.motivation-card{
+  border-radius:var(--radius);padding:18px 18px 16px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.motivation-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(135deg,rgba(var(--accent-rgb),.14) 0%,transparent 65%);
+}
+.mot-badge{
+  font-size:.65rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px;
+}
+.mot-text{
+  font-size:.95rem;line-height:1.55;color:var(--text);
+  padding-right:28px;transition:opacity .35s;
+}
+.mot-refresh{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text2);font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s ease;
+}
+.mot-refresh:active{transform:rotate(180deg) scale(.9)}
+
+/* ── Countdown ── */
+.countdown-card{
+  border-radius:var(--radius);padding:18px;margin-bottom:12px;text-align:center;
+}
+.cd-label{
+  font-size:.65rem;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--text2);margin-bottom:10px;
+}
+.cd-nums{display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:8px}
+.cd-unit{
+  display:flex;flex-direction:column;align-items:center;min-width:50px;
+  background:var(--bg3);border-radius:var(--radius-xs);padding:9px 4px 7px;
+}
+.cd-unit span{font-family:var(--mono);font-size:1.45rem;font-weight:500;color:var(--accent);line-height:1}
+.cd-unit small{font-size:.55rem;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.cd-sep{font-size:1.1rem;color:var(--text3);margin-bottom:12px}
+.cd-note{font-size:.65rem;color:var(--text3)}
+
+/* ── Section Header ── */
+.sec-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:16px 0 8px;font-size:.72rem;font-weight:700;
+  color:var(--text2);text-transform:uppercase;letter-spacing:.5px;
+}
+.small-btn{
+  font-size:.7rem;font-weight:600;color:var(--accent);
+  padding:4px 10px;border-radius:20px;
+  border:1px solid rgba(var(--accent-rgb),.3);
+  background:rgba(var(--accent-rgb),.08);
+}
+.small-btn:active{background:rgba(var(--accent-rgb),.18)}
+.task-badge{
+  background:var(--accent);color:#fff;
+  font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:20px;
+}
+
+/* ── Progress Grid ── */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px}
+.prog-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px;position:relative;overflow:hidden;
+}
+.prog-name{font-size:.68rem;font-weight:700;color:var(--text2);margin-bottom:3px}
+.prog-vals{display:flex;align-items:baseline;gap:4px;margin-bottom:7px}
+.prog-cur{
+  font-size:1.3rem;font-weight:700;color:var(--text);
+  font-family:var(--mono);outline:none;
+  border-bottom:1px solid transparent;
+  transition:border-color var(--tr);
+}
+.prog-cur:focus{border-color:var(--accent)}
+.prog-tgt{font-size:.68rem;color:var(--text3);font-family:var(--mono)}
+.prog-bar-bg{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.prog-bar-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .7s cubic-bezier(.4,0,.2,1);
+}
+.prog-pct{
+  position:absolute;top:11px;right:11px;
+  font-size:.6rem;font-family:var(--mono);color:var(--accent);
+}
+
+/* ── Quick Add ── */
+.quick-add{
+  display:flex;gap:10px;align-items:center;
+  padding:9px 9px 9px 15px;border-radius:var(--radius-sm);margin-bottom:4px;
+}
+.quick-add input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-size:.93rem;
+}
+.quick-add input::placeholder{color:var(--text3)}
+.add-btn{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-size:1.4rem;font-weight:300;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(var(--accent-rgb),.35);
+  transition:transform .15s,box-shadow .15s;
+}
+.add-btn:active{transform:scale(.88);box-shadow:none}
+
+/* ── Tasks ── */
+.task-list{display:flex;flex-direction:column;gap:7px}
+.task-item{
+  display:flex;align-items:center;gap:11px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px 13px 13px 15px;
+  transition:background var(--tr),opacity var(--tr);
+  animation:taskIn .25s ease both;
+}
+.task-item.done{opacity:.45}
+.task-item.done .task-txt{text-decoration:line-through;color:var(--text3)}
+@keyframes taskIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.task-chk{
+  width:22px;height:22px;flex-shrink:0;border-radius:50%;
+  border:2px solid var(--border);display:flex;align-items:center;
+  justify-content:center;font-size:.65rem;transition:all var(--tr);
+}
+.task-chk.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.task-txt{flex:1;font-size:.88rem;line-height:1.4;color:var(--text)}
+.task-del{color:var(--text3);font-size:.8rem;padding:4px;transition:color var(--tr)}
+.task-del:active{color:#FF6B8A}
+
+/* ── Empty State ── */
+.empty{text-align:center;padding:36px 20px;color:var(--text3)}
+.empty span{font-size:2.2rem;display:block;margin-bottom:10px;opacity:.45}
+.empty p{font-size:.83rem;line-height:1.6}
+
+/* ── Notes ── */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.note-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px;cursor:pointer;
+  position:relative;transition:background var(--tr),transform .15s;
+  animation:taskIn .25s ease both;
+}
+.note-card:active{transform:scale(.97)}
+.note-title{
+  font-size:.82rem;font-weight:600;margin-bottom:5px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.note-body{
+  font-size:.73rem;color:var(--text2);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:4;
+  -webkit-box-orient:vertical;overflow:hidden;
+}
+.note-del{
+  position:absolute;top:7px;right:7px;
+  color:var(--text3);font-size:.72rem;padding:4px;
+}
+.note-del:active{color:#FF6B8A}
+.note-date{font-size:.6rem;color:var(--text3);margin-top:7px}
+
+/* ── Timer ── */
+.timer-wrap{
+  display:flex;flex-direction:column;align-items:center;padding:20px 0;
+}
+.ring-wrap{
+  position:relative;width:256px;height:256px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:28px;
+}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--bg3);stroke-width:8}
+.ring-fill{
+  fill:none;stroke:url(#rg);stroke-width:8;stroke-linecap:round;
+  stroke-dasharray:691.15;stroke-dashoffset:0;transition:stroke-dashoffset .5s linear;
+}
+.ring-display{position:absolute;text-align:center}
+.ring-time{
+  font-family:var(--mono);font-size:2.8rem;font-weight:500;
+  color:var(--text);letter-spacing:-1px;
+}
+.ring-lbl{font-size:.72rem;color:var(--text2);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+.timer-btns{display:flex;gap:14px;align-items:center;margin-bottom:22px}
+.tbtn{
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;transition:transform .15s,box-shadow .15s;
+  border:1px solid var(--border);
+}
+.tbtn.big{
+  width:62px;height:62px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#fff;font-size:1.25rem;
+  box-shadow:0 6px 20px rgba(var(--accent-rgb),.35);
+}
+.tbtn.sm{width:46px;height:46px;color:var(--text2);background:var(--surface)}
+.tbtn:active{transform:scale(.88);box-shadow:none}
+.t-modes{display:flex;gap:7px;margin-bottom:18px}
+.t-mode{
+  padding:7px 15px;border-radius:99px;font-size:.78rem;font-weight:500;
+  background:var(--surface);border:1px solid var(--border);color:var(--text2);
+  transition:all var(--tr);
+}
+.t-mode.on{background:rgba(var(--accent-rgb),.15);border-color:var(--accent);color:var(--accent)}
+.pomo-cnt{font-size:.78rem;color:var(--text2)}
+.pomo-cnt strong{color:var(--text)}
+
+/* ── Settings ── */
+.settings-list{padding-bottom:14px}
+.s-group{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:14px;
+}
+.s-group-title{
+  font-size:.62rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--text3);padding:11px 16px 5px;
+}
+.s-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;border-top:1px solid var(--border);
+}
+.s-item:first-of-type{border-top:none}
+.s-lbl{font-size:.88rem;font-weight:500;color:var(--text)}
+.s-sub{font-size:.7rem;color:var(--text2);margin-top:2px}
+.s-item.click{cursor:pointer}
+.s-item.click:active{background:var(--surface-hover)}
+.s-item.danger .s-lbl{color:#FF6B8A}
+
+/* Toggle */
+.toggle{position:relative;width:44px;height:25px}
+.toggle input{opacity:0;width:0;height:0}
+.t-track{
+  position:absolute;inset:0;border-radius:99px;
+  background:var(--bg3);cursor:pointer;transition:background var(--tr);
+}
+.t-track::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:19px;height:19px;border-radius:50%;background:#fff;
+  transition:transform var(--tr);box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+.toggle input:checked~.t-track{background:var(--accent)}
+.toggle input:checked~.t-track::after{transform:translateX(19px)}
+
+/* Accent picker */
+.acc-pick{display:flex;gap:7px}
+.acc-dot{
+  width:23px;height:23px;border-radius:50%;
+  border:2px solid transparent;transition:transform .15s,border-color .15s;
+}
+.acc-dot.on{border-color:#fff;transform:scale(1.18)}
+
+/* Target rows */
+.tgt-row{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;border-top:1px solid var(--border);
+}
+.tgt-row label{flex:1;font-size:.83rem;color:var(--text)}
+.tgt-row input{
+  width:60px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:6px 7px;
+  color:var(--text);font-size:.82rem;text-align:center;outline:none;
+}
+.tgt-row input:focus{border-color:var(--accent)}
+
+/* ── Bottom Nav ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  height:calc(var(--nav-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  display:flex;align-items:flex-start;justify-content:space-around;
+  padding-top:4px;
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:3px;padding:8px 4px;border-radius:var(--radius-xs);
+  color:var(--text3);transition:color var(--tr);position:relative;
+}
+.nav-ico{font-size:1.2rem}
+.nav-lbl{font-size:.58rem;font-weight:600}
+.nav-btn.on{color:var(--accent)}
+.nav-btn.on::after{
+  content:'';position:absolute;top:0;left:50%;
+  transform:translateX(-50%);
+  width:22px;height:3px;border-radius:0 0 4px 4px;
+  background:var(--accent);
+}
+
+/* ── Modals ── */
+.overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{
+  position:fixed;bottom:0;left:0;right:0;z-index:201;
+  border-radius:var(--radius) var(--radius) 0 0;
+  padding:22px 18px 32px;
+  transform:translateY(110%);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.modal.show{transform:translateY(0)}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;font-size:.92rem;font-weight:700;
+}
+.m-input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:11px 13px;
+  color:var(--text);font-size:.92rem;outline:none;margin-bottom:9px;
+  transition:border-color var(--tr);
+}
+.m-input:focus{border-color:var(--accent)}
+.m-textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:11px 13px;
+  color:var(--text);font-size:.88rem;line-height:1.5;
+  outline:none;resize:none;margin-bottom:14px;
+  transition:border-color var(--tr);
+}
+.m-textarea:focus{border-color:var(--accent)}
+.modal-acts{display:flex;gap:9px}
+.btn-p,.btn-s{
+  flex:1;padding:12px;border-radius:var(--radius-sm);
+  font-size:.88rem;font-weight:700;transition:opacity .15s,transform .15s;
+}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-s{background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
+.btn-p:active,.btn-s:active{transform:scale(.97)}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 12px);
+  left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--text);color:var(--bg);
+  font-size:.8rem;font-weight:600;padding:9px 20px;border-radius:99px;
+  white-space:nowrap;z-index:400;
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- HEADER -->
-  <header>
-    <div class="logo">
-      <div class="logo-mark">OD</div>
-      <div class="logo-text">
-        <span>Odak Defterim</span>
-        <span>Hedeflerine odaklan</span>
-      </div>
-    </div>
-    <div class="date-chip" id="dateChip"></div>
-  </header>
-
-  <!-- MOTIVATION CARD -->
-  <div class="card motivation-card" onclick="nextQuote()">
-    <div class="card-label">✦ Günün Tebessümü</div>
-    <div class="motivation-quote" id="quoteText"></div>
-    <div class="motivation-author" id="quoteAuthor"></div>
-    <div class="motivation-refresh" title="Yeni alıntı">↻</div>
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-icon">🎯</div>
+    <div class="splash-name">Odak Defteri</div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
   </div>
-
-  <!-- PROGRESS CARD -->
-  <div class="card">
-    <div class="card-label">◈ Hedef İlerlemesi</div>
-    <div class="progress-header">
-      <div class="progress-title" id="progressTitle">TYT Hedefi</div>
-      <div class="progress-pct"><span id="pctNum">0</span><span>%</span></div>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="progress-labels">
-      <div class="progress-label-item">
-        <div class="progress-label-num" id="labelCurrent">37</div>
-        <div class="progress-label-sub">Mevcut Net</div>
-      </div>
-      <div class="progress-label-item" style="align-items:center">
-        <div class="progress-label-sub" id="labelGap">+33 net kaldı</div>
-      </div>
-      <div class="progress-label-item">
-        <div class="progress-label-num" id="labelTarget">70</div>
-        <div class="progress-label-sub">Hedef Net</div>
-      </div>
-    </div>
-    <div class="progress-edit-row">
-      <div class="progress-input-wrap">
-        <label for="inputCurrent">Mevcut Net</label>
-        <input class="progress-input" type="number" id="inputCurrent" value="37" min="0">
-      </div>
-      <div class="progress-input-wrap">
-        <label for="inputTarget">Hedef Net</label>
-        <input class="progress-input" type="number" id="inputTarget" value="70" min="1">
-      </div>
-    </div>
-  </div>
-
-  <!-- AYT PROGRESS CARD -->
-  <div class="card">
-    <div class="card-label">◈ Hedef İlerlemesi</div>
-    <div class="progress-header">
-      <div class="progress-title">AYT Hedefi</div>
-      <div class="progress-pct"><span id="aytPctNum">0</span><span>%</span></div>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="aytProgressFill" style="background: linear-gradient(90deg, #4e8fa0, #6db88a);"></div>
-    </div>
-    <div class="progress-labels">
-      <div class="progress-label-item">
-        <div class="progress-label-num" id="aytLabelCurrent">20</div>
-        <div class="progress-label-sub">Mevcut Net</div>
-      </div>
-      <div class="progress-label-item" style="align-items:center">
-        <div class="progress-label-sub" id="aytLabelGap">+60 net kaldı</div>
-      </div>
-      <div class="progress-label-item">
-        <div class="progress-label-num" id="aytLabelTarget">80</div>
-        <div class="progress-label-sub">Hedef Net</div>
-      </div>
-    </div>
-    <div class="progress-edit-row">
-      <div class="progress-input-wrap">
-        <label for="aytInputCurrent">Mevcut Net</label>
-        <input class="progress-input" type="number" id="aytInputCurrent" value="20" min="0">
-      </div>
-      <div class="progress-input-wrap">
-        <label for="aytInputTarget">Hedef Net</label>
-        <input class="progress-input" type="number" id="aytInputTarget" value="80" min="1">
-      </div>
-    </div>
-  </div>
-
-  <!-- TASKS CARD -->
-  <div class="card">
-    <div class="task-header">
-      <div class="card-label" style="margin-bottom:0">◧ Bugünün Görevleri</div>
-      <button class="task-add-btn" id="taskToggleBtn" title="Görev ekle">+</button>
-    </div>
-
-    <div class="task-input-row" id="taskInputRow">
-      <input class="task-input" type="text" id="taskInput" placeholder="Yeni görev ekle…" maxlength="80">
-      <button class="task-submit" id="taskSubmit">Ekle</button>
-    </div>
-
-    <div class="task-list" id="taskList"></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-item">
-      <div class="stat-num" id="statDone">0</div>
-      <div class="stat-label">Tamamlanan</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num" id="statRemaining">0</div>
-      <div class="stat-label">Kalan Görev</div>
-    </div>
-  </div>
-
-  <footer>Odak Defterim — v1.0 &nbsp;·&nbsp; Hedeflerine odaklan</footer>
 </div>
 
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar glass">
+    <div class="topbar-l">
+      <div class="app-icon-wrap">🎯</div>
+      <div>
+        <div class="topbar-title">Odak Defteri</div>
+        <div class="topbar-date" id="topDate"></div>
+      </div>
+    </div>
+    <div class="topbar-r">
+      <button class="icon-btn" id="themeBtn">☀️</button>
+    </div>
+  </header>
+
+  <!-- PAGES -->
+  <main class="page-container">
+
+    <!-- HOME -->
+    <section class="page active" id="p-home">
+
+      <div class="motivation-card glass">
+        <div class="mot-badge">✨ Günün Tebessümü</div>
+        <p class="mot-text" id="motText">…</p>
+        <button class="mot-refresh" id="motRefresh" title="Yenile">↻</button>
+      </div>
+
+      <div class="countdown-card glass">
+        <div class="cd-label">🎓 YKS'ye Kalan Süre</div>
+        <div class="cd-nums">
+          <div class="cd-unit"><span id="cdD">---</span><small>Gün</small></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><span id="cdH">--</span><small>Saat</small></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><span id="cdM">--</span><small>Dk</small></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><span id="cdS">--</span><small>Sn</small></div>
+        </div>
+        <div class="cd-note">📅 TYT: 14 Haz 2025 &nbsp;·&nbsp; AYT: 15 Haz 2025</div>
+      </div>
+
+      <div class="sec-hd">
+        <span>📊 Hedef İlerlemesi</span>
+        <button class="small-btn" id="editTgtBtn">Düzenle</button>
+      </div>
+      <div class="prog-grid" id="progGrid"></div>
+
+      <div class="sec-hd" style="margin-top:20px"><span>⚡ Hızlı Görev</span></div>
+      <div class="quick-add glass">
+        <input type="text" id="quickInput" placeholder="Bugün ne yapacaksın?" maxlength="120"/>
+        <button class="add-btn" id="quickAddBtn">+</button>
+      </div>
+
+      <div class="sec-hd">
+        <span>📋 Bugünkü Görevler</span>
+        <span class="task-badge" id="taskBadge">0</span>
+      </div>
+      <div class="task-list" id="taskList">
+        <div class="empty"><span>🎯</span><p>Henüz görev eklenmedi.</p></div>
+      </div>
+
+    </section>
+
+    <!-- NOTES -->
+    <section class="page" id="p-notes">
+      <div class="sec-hd">
+        <span>📝 Notlarım</span>
+        <button class="small-btn" id="addNoteBtn">+ Not</button>
+      </div>
+      <div class="notes-grid" id="notesGrid">
+        <div class="empty" style="grid-column:1/-1"><span>📝</span><p>Henüz not yok.</p></div>
+      </div>
+    </section>
+
+    <!-- FOCUS -->
+    <section class="page" id="p-focus">
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="var(--accent)"/>
+            <stop offset="100%" stop-color="var(--accent2)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="timer-wrap">
+        <div class="ring-wrap">
+          <svg class="ring-svg" width="256" height="256" viewBox="0 0 256 256">
+            <circle class="ring-bg" cx="128" cy="128" r="110"/>
+            <circle class="ring-fill" id="ringFill" cx="128" cy="128" r="110"/>
+          </svg>
+          <div class="ring-display">
+            <div class="ring-time" id="timerTime">25:00</div>
+            <div class="ring-lbl" id="timerLbl">Odak</div>
+          </div>
+        </div>
+        <div class="timer-btns">
+          <button class="tbtn sm" id="tReset">↺</button>
+          <button class="tbtn big" id="tToggle">▶</button>
+          <button class="tbtn sm" id="tSkip">⏭</button>
+        </div>
+        <div class="t-modes">
+          <button class="t-mode on" data-m="25" data-l="Odak">25 dk</button>
+          <button class="t-mode" data-m="5" data-l="Kısa Mola">5 dk</button>
+          <button class="t-mode" data-m="15" data-l="Uzun Mola">15 dk</button>
+        </div>
+        <div class="pomo-cnt">🍅 Bugün: <strong id="pomoCnt">0</strong> pomodoro</div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="p-settings">
+      <div class="settings-list">
+
+        <div class="s-group">
+          <div class="s-group-title">Görünüm</div>
+          <div class="s-item">
+            <div><div class="s-lbl">Tema</div><div class="s-sub">Karanlık / Aydınlık</div></div>
+            <label class="toggle"><input type="checkbox" id="themeChk"/><span class="t-track"></span></label>
+          </div>
+          <div class="s-item">
+            <div><div class="s-lbl">Renk Tonu</div></div>
+            <div class="acc-pick">
+              <button class="acc-dot on" data-a="purple" style="background:#6C63FF"></button>
+              <button class="acc-dot" data-a="teal"   style="background:#3ECFCF"></button>
+              <button class="acc-dot" data-a="rose"   style="background:#FF6B8A"></button>
+              <button class="acc-dot" data-a="amber"  style="background:#FFB347"></button>
+              <button class="acc-dot" data-a="green"  style="background:#4ADE80"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-group">
+          <div class="s-group-title">Hedefler</div>
+          <div id="settingsTgts"></div>
+        </div>
+
+        <div class="s-group">
+          <div class="s-group-title">Veriler</div>
+          <div class="s-item click" id="exportBtn">
+            <div><div class="s-lbl">Verileri Dışa Aktar</div><div class="s-sub">JSON olarak indir</div></div>
+            <span style="color:var(--text2)">→</span>
+          </div>
+          <div class="s-item click danger" id="clearBtn">
+            <div><div class="s-lbl">Tüm Verileri Sil</div><div class="s-sub">Bu işlem geri alınamaz</div></div>
+            <span style="color:var(--text2)">→</span>
+          </div>
+        </div>
+
+        <div class="s-group">
+          <div class="s-group-title">Hakkında</div>
+          <div class="s-item"><div class="s-lbl">Sürüm</div><span class="s-sub">4.0.0</span></div>
+          <div class="s-item"><div class="s-lbl">Odak Defteri © 2026</div></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav glass">
+    <button class="nav-btn on" data-p="home"><span class="nav-ico">🏠</span><span class="nav-lbl">Ana Sayfa</span></button>
+    <button class="nav-btn" data-p="notes"><span class="nav-ico">📝</span><span class="nav-lbl">Notlar</span></button>
+    <button class="nav-btn" data-p="focus"><span class="nav-ico">⏱️</span><span class="nav-lbl">Odak</span></button>
+    <button class="nav-btn" data-p="settings"><span class="nav-ico">⚙️</span><span class="nav-lbl">Ayarlar</span></button>
+  </nav>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- NOTE MODAL -->
+<div class="modal glass" id="noteModal">
+  <div class="modal-hd">
+    <span id="noteMTitle">Yeni Not</span>
+    <button class="icon-btn" id="noteMClose">✕</button>
+  </div>
+  <input class="m-input" id="noteTitleI" placeholder="Başlık..." maxlength="60"/>
+  <textarea class="m-textarea" id="noteBodyI" placeholder="Notunu buraya yaz..." rows="6"></textarea>
+  <div class="modal-acts">
+    <button class="btn-s" id="noteMCancel">İptal</button>
+    <button class="btn-p" id="noteMSave">Kaydet</button>
+  </div>
+</div>
+
+<!-- TARGET MODAL -->
+<div class="modal glass" id="tgtModal">
+  <div class="modal-hd">
+    <span>Hedefleri Düzenle</span>
+    <button class="icon-btn" id="tgtMClose">✕</button>
+  </div>
+  <div id="tgtEditList"></div>
+  <div class="modal-acts" style="margin-top:14px">
+    <button class="btn-s" id="tgtMCancel">İptal</button>
+    <button class="btn-p" id="tgtMSave">Kaydet</button>
+  </div>
+</div>
+
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATA ──
+/* ════════════════════════════════════════════
+   ODAK DEFTERİ v4.0 — JavaScript
+   ════════════════════════════════════════════ */
+'use strict';
+
+// ── Storage ──
+const S = {
+  g:(k,d)=>{try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch{return d}},
+  s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+};
+
+// ── Defaults ──
+const DEF_TGTS = [
+  {id:'tyt',name:'TYT Net',   cur:0,tgt:90},
+  {id:'mat',name:'Matematik', cur:0,tgt:30},
+  {id:'fen',name:'Fen',       cur:0,tgt:20},
+  {id:'sos',name:'Sosyal',    cur:0,tgt:20},
+];
 const QUOTES = [
-  { text: "Başarının sırrı, hedefini belirleyip, her gün ona doğru küçük adımlar atmaktır.", author: "— Johann Wolfgang von Goethe" },
-  { text: "Zorlandığında vazgeçme; zirveye yaklaştığını bil.", author: "— Türk Atasözü" },
-  { text: "Her gün biraz daha iyi olmak, bir günde mükemmel olmaktan değerlidir.", author: "— Konfüçyüs" },
-  { text: "Hayal ettiğin geleceği inşa etmek için bugünkü çaban yeter.", author: "— Anonim" },
-  { text: "Disiplin, motivasyon kaybolduğunda devreye giren şeydir.", author: "— Elbert Hubbard" },
-  { text: "Başarmak istiyorsan, başarıyı hak etmeyi öğren. Hak etmek ise çalışmakla başlar.", author: "— Mustafa Kemal Atatürk" },
-  { text: "Küçük adımlar bile ileriye taşır. Durma.", author: "— Lao-tzu" },
-  { text: "Bugün yapabileceğini yarına bırakma; çünkü yarın yeni bir bugün getirecek.", author: "— Benjamin Franklin" },
-  { text: "Hedefine ulaşmak için bugünkü rahatlığından feragat edebilirsin.", author: "— Anonim" },
-  { text: "İnsanın başarısı, karşılaştığı zorlukların büyüklüğüyle ölçülür.", author: "— Plutarkhos" },
+  "Bugün atacağın küçük adım, yarının büyük zaferinin başlangıcıdır. 🌟",
+  "Başarı, her gün küçük çabalar birikimiyle elde edilir. Sen yapabilirsin! 💪",
+  "Yorgunluk geçicidir; pes etmenin pişmanlığı kalıcı. Devam et! 🔥",
+  "En iyi yatırım, kendine yaptığın yatırımdır. Bugün de öğrenmeye devam et. 📚",
+  "Zorlandığın an, tam olarak büyüdüğün andır. 🌱",
+  "Sınav sonucu bir anda gelir; hazırlık ise her günde. 🎯",
+  "Güneş her sabah yeniden doğar. Sen de bugün yeniden başlayabilirsin. ☀️",
+  "Sabır, en güçlü silahındır. Sonuçlar için bekle, emekler için çalış. ⚡",
+  "Herkes vazgeçer; sen devam edenlerden ol. 🏆",
+  "Beynin her çalıştıkça büyür. Bugün de onu egzersiz yaptır. 🧠",
+  "Hedeflerin seni korkutuyorsa, yeterince büyük demektir. 🚀",
+  "Küçük adımlar, büyük yolculuklar yapar. Bugün bir adım at. 👣",
 ];
 
-let quoteIdx = Math.floor(Math.random() * QUOTES.length);
-let tasks = JSON.parse(localStorage.getItem('od_tasks') || '[]');
-let current = parseInt(localStorage.getItem('od_current') || '37');
-let target = parseInt(localStorage.getItem('od_target') || '70');
-let taskInputOpen = false;
+// ── State ──
+const st = {
+  tasks:  S.g('od_tasks',[]),
+  notes:  S.g('od_notes',[]),
+  tgts:   S.g('od_tgts', DEF_TGTS),
+  pomo:   S.g('od_pomo', {date:'',cnt:0}),
+  theme:  S.g('od_theme','dark'),
+  accent: S.g('od_accent','purple'),
+};
 
-// ── DATE ──
-function setDate() {
-  const now = new Date();
-  const opts = { weekday: 'long', day: 'numeric', month: 'long' };
-  document.getElementById('dateChip').textContent = now.toLocaleDateString('tr-TR', opts);
+// ── $ helper ──
+const $=id=>document.getElementById(id);
+
+// ════════ INIT ════════
+function init(){
+  applyTheme(st.theme);
+  applyAccent(st.accent);
+  renderDate();
+  renderMot();
+  startCD();
+  renderProg();
+  renderTasks();
+  renderNotes();
+  renderSettingsTgts();
+  setupNav();
+  setupTimer();
+  setupModals();
+  setupSettings();
+  resetPomoIfNew();
+  bindQuickAdd();
+
+  $('themeBtn').onclick = toggleTheme;
+
+  setTimeout(()=>{
+    $('splash').classList.add('hide');
+    $('app').classList.add('ready');
+  }, 1100);
 }
 
-// ── QUOTES ──
-function nextQuote() {
-  quoteIdx = (quoteIdx + 1) % QUOTES.length;
-  const q = QUOTES[quoteIdx];
-  const el = document.getElementById('quoteText');
-  const au = document.getElementById('quoteAuthor');
-  el.style.opacity = 0; au.style.opacity = 0;
-  setTimeout(() => {
-    el.textContent = q.text;
-    au.textContent = q.author;
-    el.style.opacity = 1; au.style.opacity = 1;
-  }, 300);
+// ════════ THEME / ACCENT ════════
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  $('themeBtn').textContent = t==='dark'?'☀️':'🌙';
+  const c=$('themeChk'); if(c) c.checked=(t==='light');
+}
+function toggleTheme(){
+  st.theme = st.theme==='dark'?'light':'dark';
+  S.s('od_theme',st.theme); applyTheme(st.theme);
+}
+function applyAccent(a){
+  document.documentElement.setAttribute('data-accent',a);
+  document.querySelectorAll('.acc-dot').forEach(d=>d.classList.toggle('on',d.dataset.a===a));
 }
 
-function initQuote() {
-  const q = QUOTES[quoteIdx];
-  document.getElementById('quoteText').textContent = q.text;
-  document.getElementById('quoteAuthor').textContent = q.author;
+// ════════ DATE ════════
+function renderDate(){
+  $('topDate').textContent = new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
 }
 
-// ── PROGRESS ──
-function updateProgress() {
-  const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
-  const gap = Math.max(0, target - current);
-
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('pctNum').textContent = pct;
-  document.getElementById('labelCurrent').textContent = current;
-  document.getElementById('labelTarget').textContent = target;
-  document.getElementById('labelGap').textContent = gap > 0 ? `+${gap} net kaldı` : '🎯 Hedefe ulaştın!';
-
-  localStorage.setItem('od_current', current);
-  localStorage.setItem('od_target', target);
+// ════════ MOTIVATION ════════
+let lastQ=-1;
+function renderMot(){
+  let i; do{i=Math.floor(Math.random()*QUOTES.length)}while(i===lastQ); lastQ=i;
+  const el=$('motText');
+  el.style.opacity='0';
+  setTimeout(()=>{el.textContent=QUOTES[i];el.style.transition='opacity .4s';el.style.opacity='1';},160);
 }
 
-document.getElementById('inputCurrent').value = current;
-document.getElementById('inputTarget').value = target;
-
-document.getElementById('inputCurrent').addEventListener('input', e => {
-  const v = parseInt(e.target.value);
-  if (!isNaN(v) && v >= 0) { current = v; updateProgress(); }
-});
-
-document.getElementById('inputTarget').addEventListener('input', e => {
-  const v = parseInt(e.target.value);
-  if (!isNaN(v) && v >= 1) { target = v; updateProgress(); }
-});
-
-// ── AYT PROGRESS ──
-let aytCurrent = parseInt(localStorage.getItem('od_ayt_current') || '20');
-let aytTarget  = parseInt(localStorage.getItem('od_ayt_target')  || '80');
-
-function updateAytProgress() {
-  const pct = aytTarget > 0 ? Math.min(100, Math.round((aytCurrent / aytTarget) * 100)) : 0;
-  const gap = Math.max(0, aytTarget - aytCurrent);
-
-  document.getElementById('aytProgressFill').style.width = pct + '%';
-  document.getElementById('aytPctNum').textContent = pct;
-  document.getElementById('aytLabelCurrent').textContent = aytCurrent;
-  document.getElementById('aytLabelTarget').textContent = aytTarget;
-  document.getElementById('aytLabelGap').textContent = gap > 0 ? `+${gap} net kaldı` : '🎯 Hedefe ulaştın!';
-
-  localStorage.setItem('od_ayt_current', aytCurrent);
-  localStorage.setItem('od_ayt_target', aytTarget);
-}
-
-document.getElementById('aytInputCurrent').value = aytCurrent;
-document.getElementById('aytInputTarget').value = aytTarget;
-
-document.getElementById('aytInputCurrent').addEventListener('input', e => {
-  const v = parseInt(e.target.value);
-  if (!isNaN(v) && v >= 0) { aytCurrent = v; updateAytProgress(); }
-});
-
-document.getElementById('aytInputTarget').addEventListener('input', e => {
-  const v = parseInt(e.target.value);
-  if (!isNaN(v) && v >= 1) { aytTarget = v; updateAytProgress(); }
-});
-
-
-function saveTasks() { localStorage.setItem('od_tasks', JSON.stringify(tasks)); }
-
-function renderTasks() {
-  const list = document.getElementById('taskList');
-  const done = tasks.filter(t => t.done).length;
-  const rem = tasks.filter(t => !t.done).length;
-  document.getElementById('statDone').textContent = done;
-  document.getElementById('statRemaining').textContent = rem;
-
-  if (tasks.length === 0) {
-    list.innerHTML = '<div class="task-empty"><span>✦</span>Henüz görev yok.<br>Bugünün planını ekle!</div>';
-    return;
+// ════════ COUNTDOWN ════════
+const YKS=new Date('2025-06-14T10:00:00');
+function startCD(){
+  function tick(){
+    const d=YKS-new Date();
+    if(d<=0){$('cdD').textContent=$('cdH').textContent=$('cdM').textContent=$('cdS').textContent='00';return}
+    $('cdD').textContent=String(Math.floor(d/86400000)).padStart(3,'0');
+    $('cdH').textContent=String(Math.floor((d%86400000)/3600000)).padStart(2,'0');
+    $('cdM').textContent=String(Math.floor((d%3600000)/60000)).padStart(2,'0');
+    $('cdS').textContent=String(Math.floor((d%60000)/1000)).padStart(2,'0');
   }
+  tick(); setInterval(tick,1000);
+}
 
-  list.innerHTML = '';
-  tasks.forEach((t, i) => {
-    const div = document.createElement('div');
-    div.className = 'task-item' + (t.done ? ' done' : '');
-    div.innerHTML = `
-      <div class="task-check"><span class="task-check-icon">✓</span></div>
-      <div class="task-text">${escapeHtml(t.text)}</div>
-      <div class="task-del" data-i="${i}" title="Sil">×</div>
-    `;
-    div.addEventListener('click', e => {
-      if (e.target.classList.contains('task-del')) {
-        tasks.splice(i, 1);
-        saveTasks(); renderTasks();
-        showToast('Görev silindi');
-      } else {
-        tasks[i].done = !tasks[i].done;
-        saveTasks(); renderTasks();
-        if (tasks[i] && tasks[i].done) showToast('Harika! Bir görev tamamlandı ✓');
-      }
+// ════════ PROGRESS ════════
+function renderProg(){
+  const g=$('progGrid'); g.innerHTML='';
+  st.tgts.forEach(t=>{
+    const pct=Math.min(100,Math.round((t.cur/t.tgt)*100))||0;
+    const c=document.createElement('div'); c.className='prog-card';
+    c.innerHTML=`
+      <div class="prog-name">${esc(t.name)}</div>
+      <div class="prog-vals">
+        <span class="prog-cur" contenteditable="true" data-id="${t.id}">${t.cur}</span>
+        <span class="prog-tgt">/ ${t.tgt}</span>
+      </div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+      <span class="prog-pct">${pct}%</span>`;
+    g.appendChild(c);
+  });
+  g.querySelectorAll('[contenteditable]').forEach(el=>{
+    el.addEventListener('blur',()=>{
+      const t=st.tgts.find(x=>x.id===el.dataset.id);
+      if(t){t.cur=parseInt(el.textContent)||0;S.s('od_tgts',st.tgts);renderProg();renderSettingsTgts();}
     });
-    list.appendChild(div);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur();}});
   });
 }
 
-function addTask() {
-  const input = document.getElementById('taskInput');
-  const text = input.value.trim();
-  if (!text) return;
-  tasks.push({ text, done: false });
-  saveTasks(); renderTasks();
-  input.value = '';
-  showToast('Görev eklendi');
+// ════════ TASKS ════════
+function renderTasks(){
+  const l=$('taskList'),b=$('taskBadge');
+  b.textContent=st.tasks.filter(t=>!t.done).length;
+  if(!st.tasks.length){l.innerHTML=`<div class="empty"><span>🎯</span><p>Henüz görev eklenmedi.<br/>Yukarıdan ekleyebilirsin.</p></div>`;return;}
+  l.innerHTML='';
+  [...st.tasks].sort((a,b)=>a.done-b.done).forEach(task=>{
+    const d=document.createElement('div'); d.className='task-item'+(task.done?' done':'');
+    d.innerHTML=`
+      <div class="task-chk ${task.done?'on':''}" data-id="${task.id}">${task.done?'✓':''}</div>
+      <div class="task-txt">${esc(task.text)}</div>
+      <button class="task-del" data-id="${task.id}">✕</button>`;
+    l.appendChild(d);
+  });
+  l.querySelectorAll('.task-chk').forEach(el=>el.addEventListener('click',()=>toggleTask(el.dataset.id)));
+  l.querySelectorAll('.task-del').forEach(el=>el.addEventListener('click',()=>delTask(el.dataset.id)));
+}
+function addTask(txt){
+  if(!txt.trim())return;
+  st.tasks.push({id:Date.now()+'',text:txt.trim(),done:false});
+  S.s('od_tasks',st.tasks); renderTasks();
+}
+function toggleTask(id){
+  const t=st.tasks.find(x=>x.id===id); if(t){t.done=!t.done;S.s('od_tasks',st.tasks);renderTasks();}
+}
+function delTask(id){
+  st.tasks=st.tasks.filter(x=>x.id!==id); S.s('od_tasks',st.tasks); renderTasks(); toast('Görev silindi');
+}
+function bindQuickAdd(){
+  const qi=$('quickInput');
+  $('quickAddBtn').onclick=()=>{addTask(qi.value);qi.value='';};
+  qi.onkeydown=e=>{if(e.key==='Enter'){addTask(qi.value);qi.value='';}};
 }
 
-document.getElementById('taskToggleBtn').addEventListener('click', () => {
-  taskInputOpen = !taskInputOpen;
-  const row = document.getElementById('taskInputRow');
-  row.classList.toggle('open', taskInputOpen);
-  document.getElementById('taskToggleBtn').textContent = taskInputOpen ? '−' : '+';
-  if (taskInputOpen) setTimeout(() => document.getElementById('taskInput').focus(), 200);
-});
+// ════════ NOTES ════════
+function renderNotes(){
+  const g=$('notesGrid');
+  if(!st.notes.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1"><span>📝</span><p>Henüz not yok.</p></div>`;return;}
+  g.innerHTML='';
+  st.notes.forEach(n=>{
+    const c=document.createElement('div'); c.className='note-card';
+    c.innerHTML=`
+      <button class="note-del" data-id="${n.id}">✕</button>
+      <div class="note-title">${esc(n.title||'Başlıksız')}</div>
+      <div class="note-body">${esc(n.body)}</div>
+      <div class="note-date">${new Date(n.ts).toLocaleDateString('tr-TR')}</div>`;
+    c.addEventListener('click',e=>{if(!e.target.classList.contains('note-del'))openNoteM(n.id);});
+    g.appendChild(c);
+  });
+  g.querySelectorAll('.note-del').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();delNote(el.dataset.id);}));
+}
+function delNote(id){st.notes=st.notes.filter(n=>n.id!==id);S.s('od_notes',st.notes);renderNotes();toast('Not silindi');}
 
-document.getElementById('taskSubmit').addEventListener('click', addTask);
-document.getElementById('taskInput').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ════════ TIMER ════════
+let tmrInt=null,tmrRun=false,tmrSec=1500,tmrTot=1500,tmrLbl='Odak';
+const CIRC=691.15;
+function setupTimer(){
+  $('tToggle').onclick=toggleTimer;
+  $('tReset').onclick=resetTimer;
+  $('tSkip').onclick=finishTimer;
+  document.querySelectorAll('.t-mode').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.t-mode').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      tmrLbl=b.dataset.l; tmrTot=b.dataset.m*60; tmrSec=tmrTot;
+      tmrRun=false; clearInterval(tmrInt);
+      $('tToggle').textContent='▶'; updTimer();
+    };
+  });
+}
+function toggleTimer(){
+  tmrRun=!tmrRun; $('tToggle').textContent=tmrRun?'⏸':'▶';
+  if(tmrRun){tmrInt=setInterval(()=>{tmrSec--;if(tmrSec<=0){finishTimer();return;}updTimer();},1000);}
+  else clearInterval(tmrInt);
+}
+function resetTimer(){clearInterval(tmrInt);tmrRun=false;tmrSec=tmrTot;$('tToggle').textContent='▶';updTimer();}
+function finishTimer(){
+  clearInterval(tmrInt);tmrRun=false;$('tToggle').textContent='▶';
+  if(tmrLbl==='Odak'&&tmrTot===1500){
+    st.pomo.cnt++;S.s('od_pomo',st.pomo);$('pomoCnt').textContent=st.pomo.cnt;
+    toast('🍅 Pomodoro tamamlandı! Mola hakkın kazandın.');
+  }
+  tmrSec=tmrTot; updTimer();
+}
+function updTimer(){
+  const m=Math.floor(tmrSec/60),s=tmrSec%60;
+  $('timerTime').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  $('timerLbl').textContent=tmrLbl;
+  $('ringFill').style.strokeDashoffset=CIRC*(1-tmrSec/tmrTot);
+}
+function resetPomoIfNew(){
+  const today=new Date().toDateString();
+  if(st.pomo.date!==today){st.pomo={date:today,cnt:0};S.s('od_pomo',st.pomo);}
+  $('pomoCnt').textContent=st.pomo.cnt;
 }
 
-// ── TOAST ──
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+// ════════ NAVIGATION ════════
+function setupNav(){
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const pid='p-'+b.dataset.p;
+      document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active');if(p.id===pid)p.classList.add('active');});
+    };
+  });
 }
 
-// ── INIT ──
-setDate();
-initQuote();
-renderTasks();
-setTimeout(() => updateProgress(), 100);
-setTimeout(() => updateAytProgress(), 100);
+// ════════ MODALS ════════
+let editNoteId=null;
+function setupModals(){
+  $('addNoteBtn').onclick=()=>openNoteM(null);
+  $('noteMClose').onclick=closeAll;
+  $('noteMCancel').onclick=closeAll;
+  $('noteMSave').onclick=saveNote;
+  $('editTgtBtn').onclick=openTgtM;
+  $('tgtMClose').onclick=closeAll;
+  $('tgtMCancel').onclick=closeAll;
+  $('tgtMSave').onclick=saveTgts;
+  $('overlay').onclick=closeAll;
+}
+function openNoteM(id){
+  editNoteId=id;
+  const n=id?st.notes.find(x=>x.id===id):null;
+  $('noteMTitle').textContent=id?'Notu Düzenle':'Yeni Not';
+  $('noteTitleI').value=n?n.title:'';
+  $('noteBodyI').value=n?n.body:'';
+  showM('noteModal');
+}
+function saveNote(){
+  const title=$('noteTitleI').value.trim(),body=$('noteBodyI').value.trim();
+  if(!body){toast('Not içeriği boş olamaz');return;}
+  if(editNoteId){const n=st.notes.find(x=>x.id===editNoteId);if(n){n.title=title;n.body=body;}}
+  else st.notes.unshift({id:Date.now()+'',title,body,ts:Date.now()});
+  S.s('od_notes',st.notes);renderNotes();closeAll();
+  toast(editNoteId?'Not güncellendi ✓':'Not kaydedildi ✓');
+}
+function openTgtM(){
+  $('tgtEditList').innerHTML=st.tgts.map(t=>`
+    <div class="tgt-row">
+      <label>${esc(t.name)}</label>
+      <input type="number" min="0" max="999" value="${t.cur}" data-f="cur" data-id="${t.id}"/>
+      <span style="color:var(--text3);font-size:.75rem">/</span>
+      <input type="number" min="1" max="999" value="${t.tgt}" data-f="tgt" data-id="${t.id}"/>
+    </div>`).join('');
+  showM('tgtModal');
+}
+function saveTgts(){
+  $('tgtEditList').querySelectorAll('input').forEach(i=>{
+    const t=st.tgts.find(x=>x.id===i.dataset.id);if(t)t[i.dataset.f]=parseInt(i.value)||0;
+  });
+  S.s('od_tgts',st.tgts);renderProg();renderSettingsTgts();closeAll();toast('Hedefler güncellendi ✓');
+}
+function showM(id){$('overlay').classList.add('show');$(id).classList.add('show');}
+function closeAll(){$('overlay').classList.remove('show');document.querySelectorAll('.modal').forEach(m=>m.classList.remove('show'));}
 
-// Auto-refresh quote every 60s
-setInterval(nextQuote, 60000);
+// ════════ SETTINGS ════════
+function setupSettings(){
+  $('themeChk').onchange=()=>{st.theme=$('themeChk').checked?'light':'dark';S.s('od_theme',st.theme);applyTheme(st.theme);};
+  document.querySelectorAll('.acc-dot').forEach(d=>{
+    d.onclick=()=>{st.accent=d.dataset.a;S.s('od_accent',st.accent);applyAccent(st.accent);};
+  });
+  $('exportBtn').onclick=exportData;
+  $('clearBtn').onclick=()=>{if(confirm('Tüm veriler silinecek. Emin misin?')){localStorage.clear();location.reload();}};
+}
+function renderSettingsTgts(){
+  const el=$('settingsTgts');
+  el.innerHTML=st.tgts.map(t=>`
+    <div class="s-item">
+      <div><div class="s-lbl">${esc(t.name)}</div><div class="s-sub">${t.cur} / ${t.tgt} net</div></div>
+    </div>`).join('');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify({tasks:st.tasks,notes:st.notes,tgts:st.tgts},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='odak-yedek.json';a.click();
+  toast('Veriler dışa aktarıldı ✓');
+}
+
+// ════════ UTILS ════════
+function toast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── Boot ──
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
